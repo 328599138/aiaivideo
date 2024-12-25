@@ -1,0 +1,26 @@
+{
+  "extName": {
+    "message": "Hailuo AI Video Progress Monitor",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Monitor video generation progress on Hailuo AI platform",
+    "description": "Extension description"
+  },
+  "videoProgress": {
+    "message": "Video Generation Progress",
+    "description": "Progress title"
+  },
+  "noTasks": {
+    "message": "No active tasks",
+    "description": "No tasks message"
+  },
+  "videoComplete": {
+    "message": "Video Generation Complete",
+    "description": "Complete notification title"
+  },
+  "videoCompleteMessage": {
+    "message": "Video has been generated successfully",
+    "description": "Complete notification message"
+  }
+}

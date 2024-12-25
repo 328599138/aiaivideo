@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>海螺AI视频进度监控</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 15px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #1a1a1a;
+      color: #ffffff;
+    }
+
+    .header {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+    }
+
+    .task-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .task-item {
+      padding: 15px;
+      background: #2a2a2a;
+      border-radius: 8px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #333;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #4CAF50;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 14px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .no-tasks {
+      text-align: center;
+      color: #666;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header" id="progressTitle"></div>
+  <div class="task-list" id="taskList">
+    <div class="no-tasks" id="noTasksMessage"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 

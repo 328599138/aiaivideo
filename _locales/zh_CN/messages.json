@@ -1,0 +1,26 @@
+{
+  "extName": {
+    "message": "海螺AI视频进度监控",
+    "description": "扩展名称"
+  },
+  "extDescription": {
+    "message": "监控海螺AI平台视频生成进度",
+    "description": "扩展描述"
+  },
+  "videoProgress": {
+    "message": "视频生成进度",
+    "description": "进度标题"
+  },
+  "noTasks": {
+    "message": "暂无生成任务",
+    "description": "无任务提示"
+  },
+  "videoComplete": {
+    "message": "视频生成完成",
+    "description": "完成通知标题"
+  },
+  "videoCompleteMessage": {
+    "message": "视频已完成生成",
+    "description": "完成通知内容"
+  }
+}
