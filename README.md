@@ -53,10 +53,9 @@
 5. 国际化：支持多语言切换
 
 ### 权限说明
-- notifications: 发送任务完成通知
-- storage: 保存任务进度信息
-- scripting: 监控网页进度信息
-- host_permissions: 仅限访问hailuoai.video域名
+- notifications: 用于发送任务完成通知
+- storage: 用于保存任务进度信息
+- host_permissions: 仅限访问 hailuoai.video 域名
 
 ## 文件结构 
 extension/

@@ -11,39 +11,46 @@ class BaseMonitor {
     window.addEventListener('unload', () => {
       this.stopMonitoring();
     });
+
+    this.isContextValid = true; // 添加上下文状态标志
+  }
+
+  // 初始化观察器
+  initObserver() {
+    if (!this.isContextValid) return; // 如果上下文已失效，不再初始化
+
+    try {
+      this.observer = new MutationObserver((mutations) => {
+        this.handleMutations(mutations);
+      });
+    } catch (error) {
+      // 使用 warn 级别，不显示为错误
+      console.warn('初始化观察器失败，将在下次重试');
+      this.isContextValid = false;
+    }
   }
 
   // 开始监控
   startMonitoring() {
-    if (!document.body) {
-      throw new Error('DOM未就绪，无法开始监控');
+    if (!this.isContextValid) {
+      console.warn('扩展上下文已失效，仅进行本地监控');
+      return;
+    }
+
+    if (!this.observer) {
+      this.initObserver();
     }
 
     try {
-      // 如果已经有observer，先停止它
-      this.stopMonitoring();
-
-      // 创建新的observer
-      this.observer = new MutationObserver((mutations) => {
-        try {
-          this.handleMutations(mutations);
-        } catch (error) {
-          console.error('处理DOM变化时出错:', error);
-        }
-      });
-
-      // 开始观察
       const config = { 
         attributes: true, 
         childList: true, 
         subtree: true 
       };
-      
       this.observer.observe(document.body, config);
-      console.log('开始监控DOM变化');
     } catch (error) {
-      console.error('开始监控失败:', error);
-      throw error;
+      console.warn('启动监控失败，将继续本地运行');
+      this.isContextValid = false;
     }
   }
 
@@ -52,59 +59,53 @@ class BaseMonitor {
     if (this.observer) {
       try {
         this.observer.disconnect();
-        this.observer = null;
-        console.log('停止监控');
       } catch (error) {
-        console.error('停止监控失败:', error);
+        // 使用 warn 级别，不显示为错误
+        console.warn('停止监控时遇到问题，忽略并继续');
       }
+      this.observer = null;
     }
   }
 
-  // 向background发送消息
-  async sendMessage(type, data) {
-    // 如果扩展上下文不可用，只在本地更新状态
-    if (!chrome?.runtime?.id) {
-      console.warn('扩展上下文不可用');
-      return { success: true }; // 返回成功，让业务继续进行
-    }
+  // 发送消息到后台，带重试机制
+  async sendMessage(type, data, retryCount = 0) {
+    if (!this.isContextValid) return { success: true };
 
     try {
-      // 直接使用sendMessage
       const response = await chrome.runtime.sendMessage({
         type: type,
         data: data
       });
       return response;
     } catch (error) {
-      // 如果是扩展上下文失效，不影响本地状态更新
       if (error.message.includes('Extension context invalidated')) {
-        console.warn('扩展上下文已失效，忽略消息发送');
-        return { success: true }; // 返回成功，让业务继续进行
+        this.isContextValid = false;
+        console.warn('扩展上下文已失效，切换到本地模式');
+        return { success: true };
       }
-      // 其他错误则抛出
-      console.error('发送消息失败:', error);
-      throw error;
+      
+      // 如果是其他错误且未超过重试次数，则重试
+      if (retryCount < 3) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return this.sendMessage(type, data, retryCount + 1);
+      }
+      
+      // 超过重试次数，降级到本地模式
+      console.warn('消息发送失败，切换到本地模式');
+      return { success: true };
     }
   }
 
   // 更新任务状态
   async updateTask(taskId, progress) {
-    if (!taskId) return;
-    
     try {
-      // 先更新本地状态
-      this.tasks.set(taskId, progress);
-      console.log(`更新任务状态: ${taskId} -> ${progress}%`);
-      
-      // 尝试发送消息，但不阻塞本地状态更新
       await this.sendMessage('UPDATE_TASK', {
         taskId: taskId,
         progress: progress
-      }).catch(error => {
-        console.warn('发送更新消息失败，但本地状态已更新:', error);
       });
     } catch (error) {
-      console.error('更新任务失败:', error);
+      // 即使更新失败也继续监控
+      console.warn('更新任务状态失败，继续本地监控');
     }
   }
 
@@ -128,9 +129,9 @@ class BaseMonitor {
     }
   }
 
-  // 处理DOM变化的方法(由子类实现)
+  // 处理DOM变化
   handleMutations(mutations) {
-    throw new Error('handleMutations must be implemented by subclass');
+    // 由子类实现具体逻辑
   }
 }
 

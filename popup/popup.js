@@ -49,6 +49,10 @@ function refreshTasks() {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
+  // 设置国际化文本
+  document.getElementById('progressTitle').textContent = chrome.i18n.getMessage('videoProgress');
+  document.getElementById('noTasksMessage').textContent = chrome.i18n.getMessage('noTasks');
+  
   // 立即获取一次任务状态
   refreshTasks();
   

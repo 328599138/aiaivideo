@@ -3,10 +3,10 @@
   "name": "海螺AI视频进度监控",
   "description": "监控海螺AI平台视频生成进度",
   "version": "1.0",
+  "default_locale": "zh_CN",
   "permissions": [
     "notifications",
-    "storage",
-    "scripting"
+    "storage"
   ],
   "host_permissions": [
     "*://*.hailuoai.video/*",

@@ -29,8 +29,8 @@ function sendNotification(taskId) {
   chrome.notifications.create(`task-${taskId}`, {
     type: 'basic',
     iconUrl: '/icons/icon128.png',
-    title: '视频生成完成',
-    message: '视频已完成生成',
+    title: chrome.i18n.getMessage('videoComplete'),
+    message: chrome.i18n.getMessage('videoCompleteMessage'),
     priority: 2
   });
 }
